@@ -3,23 +3,21 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://localhost:44322/",
-      "sslPort": 44322
+      "applicationUrl": "https://localhost:44374/",
+      "sslPort": 44374
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchUrl": "eula",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Portal.API": {
-      "commandName": "Project",
+    "Portal.UI": {
+      "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "eula",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -28,7 +26,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/eula",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/",
       "publishAllPorts": true,
       "useSSL": true
     }

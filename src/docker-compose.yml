@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  eproducts.idp:
+    image: ${DOCKER_REGISTRY-}eproductsidp
+    ports:
+      - 32772:80
+    build:
+      context: .
+      dockerfile: Eproducts.IDP/Dockerfile
+
+  portal.ui:
+    image: ${DOCKER_REGISTRY-}portalui
+    ports:
+      - 32773:80
+    build:
+      context: .
+      dockerfile: Portal.UI/Dockerfile
+    links:
+      - eproducts.idp

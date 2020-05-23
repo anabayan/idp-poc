@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model List<Portal.UI.Models.Product>
+
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <hr />
+
+        @foreach (var x in Model)
+        {
+            <h6>
+                @x.ProductId --> @x.ProductName
+            </h6>
+        }
+    </div>
