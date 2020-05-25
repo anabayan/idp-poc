@@ -65,7 +65,6 @@ namespace Eproducts.IDP.Infrastructure.Extensions
             hcBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy());
 
-
             return services;
         }
 

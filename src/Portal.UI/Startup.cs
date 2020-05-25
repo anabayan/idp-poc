@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.Net.Http.Headers;
 using Portal.UI.HttpHandlers;
+using Portal.UI.Infrastructure.Extensions;
 
 namespace Portal.UI
 {
@@ -33,6 +36,9 @@ namespace Portal.UI
             services.AddControllersWithViews()
                  .AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
 
+            services.AddCustomHealthCheck(Configuration)
+               .Configure<AppSettings>(Configuration);
+
             services.AddAuthorization(authorizationOptions =>
             {
                 authorizationOptions.AddPolicy(
@@ -45,9 +51,7 @@ namespace Portal.UI
             });
 
             services.AddHttpContextAccessor();
-
             services.AddTransient<BearerTokenHandler>();
-
             services.AddHttpClient("PortalAPI", client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44322/");
@@ -55,29 +59,7 @@ namespace Portal.UI
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
             }).AddHttpMessageHandler<BearerTokenHandler>();
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
-                options.AccessDeniedPath = "/Home/Error";
-                options.ExpireTimeSpan = TimeSpan.FromSeconds(600);
-                options.SlidingExpiration = true;
-            })
-            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.Authority = "https://localhost:44349/";
-                options.ClientId = "portalui";
-                options.ResponseType = "code";                
-                options.Scope.Add("portalapi");
-                options.UsePkce = true;
-                options.SaveTokens = true;
-                options.ClientSecret = "secret";
-                options.GetClaimsFromUserInfoEndpoint = true;
-            });
+            services.SetupOpenIDConnection(Configuration);
 
         }
 
@@ -110,6 +92,16 @@ namespace Portal.UI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
             });
         }
     }

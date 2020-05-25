@@ -44,6 +44,7 @@ namespace Eproducts.IDP
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseHttpsRedirection();
 
             app.UseHealthChecksUI(config =>
             {
