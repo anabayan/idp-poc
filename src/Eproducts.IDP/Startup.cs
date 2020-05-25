@@ -26,6 +26,8 @@ namespace Eproducts.IDP
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAppInsight(Configuration);
+
             // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();
 

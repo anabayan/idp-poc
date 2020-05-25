@@ -83,15 +83,11 @@ namespace Eproducts.IDP
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
 
             return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .MinimumLevel.Debug()
                 .Enrich.WithProperty("ApplicationContext", AppName)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                //.WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+                .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://localhost:5341/" : seqServerUrl)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }

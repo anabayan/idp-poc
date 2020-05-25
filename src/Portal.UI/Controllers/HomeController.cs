@@ -32,6 +32,8 @@ namespace Portal.UI.Controllers
         {
             await WriteOutIdentityInformation();
 
+            _logger.LogInformation("User {User} logged in", User);
+
             var portalClient = _httpClientFactory.CreateClient("PortalAPI");
 
             var request = new HttpRequestMessage(HttpMethod.Get, "api/Product/GetProducts");
@@ -84,6 +86,8 @@ namespace Portal.UI.Controllers
 
         public async Task Logout()
         {
+
+            _logger.LogInformation("User {User} logged out", User);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
